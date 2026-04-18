@@ -53,10 +53,10 @@ export const About = () => {
           >
             <div className="glass-strong rounded-2xl p-8 aspect-square flex items-center justify-center">
               <div className="text-center">
-                <div className="w-[200px] h-[200px] mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden border-2 border-primary">
-                  <img 
-                    src="me.jpeg" 
-                    alt="Profil" 
+                <div className="w-[400px] h-[400px] mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden border-2 border-primary">
+                  <img
+                    src="me1.jpeg"
+                    alt="Profil"
                     className="w-full h-full object-cover"
                   />
                 </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Moon, Sun, Menu, X, Globe } from "lucide-react";
+import { Moon, Sun, Menu, X, Globe, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
 
 export const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -12,6 +13,8 @@ export const Navigation = () => {
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const location = useLocation();
+  const isCV = location.pathname.includes("/cv");
 
   const languages = [
     { code: "fr", label: "Français", flag: "🇫🇷" },
@@ -25,7 +28,7 @@ export const Navigation = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-
+      if (isCV) return;
       const sections = [
         "home",
         "about",
@@ -46,10 +49,9 @@ export const Navigation = () => {
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isCV]);
 
   const navItems = [
     { id: "home", label: t.nav.home },
@@ -76,57 +78,74 @@ export const Navigation = () => {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "glass shadow-lg py-3" : "bg-transparent py-5"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass shadow-lg py-3" : "bg-transparent py-5"}`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"
-          ></motion.div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <div className="min-w-[10px] max-w-[120px]">
-              <motion.img
-                key={theme}
-                src={theme === "dark" ? "logo.png" : "logo2.png"}
-                alt="Logo"
-                className="object-contain"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={`relative text-sm font-medium transition-colors hover:text-primary ${
-                  activeSection === item.id
-                    ? "text-primary"
-                    : "text-foreground/80"
-                }`}
-              >
-                {item.label}
-                {activeSection === item.id && (
-                  <motion.div
-                    layoutId="activeSection"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </button>
-            ))}
+          <div className="min-w-[80px] max-w-[100px]">
+            <motion.img
+              key={theme}
+              src={theme === "dark" ? "logo.png" : "logo2.png"}
+              alt="Logo"
+              className="object-contain"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            />
           </div>
 
-          {/* Theme & Language Controls */}
+          {/* Desktop nav — only on index */}
+          {!isCV && (
+            <div className="hidden md:flex items-center gap-6">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`relative text-sm font-medium transition-colors hover:text-primary ${activeSection === item.id ? "text-primary" : "text-foreground/70"}`}
+                >
+                  {item.label}
+                  {activeSection === item.id && (
+                    <motion.div
+                      layoutId="activeSection"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Controls */}
           <div className="flex items-center gap-2 relative">
+            {/* CV link */}
+            {!isCV ? (
+              <Link to="/my-portfolio/cv">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex items-center gap-1.5 text-xs border-primary/30 hover:border-primary hover:text-primary transition-all"
+                >
+                  <FileText className="h-3.5 w-3.5" /> {t.nav.cv}
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/my-portfolio">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-muted-foreground hover:text-primary"
+                >
+                  ← {t.nav.home}
+                </Button>
+              </Link>
+            )}
+
             {/* Theme toggle */}
             <Button
               variant="ghost"
@@ -140,38 +159,37 @@ export const Navigation = () => {
                 transition={{ duration: 0.3 }}
               >
                 {theme === "dark" ? (
-                  <Moon className="h-5 w-5" />
+                  <Moon className="h-4 w-4" />
                 ) : (
-                  <Sun className="h-5 w-5" />
+                  <Sun className="h-4 w-4" />
                 )}
               </motion.div>
             </Button>
 
-            {/* Language Selector */}
+            {/* Language selector */}
             <div className="relative">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
-                className="rounded-full font-semibold flex items-center gap-2"
+                className="rounded-full font-semibold flex items-center gap-1.5 text-xs"
               >
-                <Globe className="h-4 w-4" />
+                <Globe className="h-3.5 w-3.5" />
                 <motion.span
                   key={language}
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
                   {currentLang?.flag} {currentLang?.code.toUpperCase()}
                 </motion.span>
               </Button>
-
               <AnimatePresence>
                 {languageMenuOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-36 rounded-lg glass-strong p-2 shadow-lg z-50"
+                    exit={{ opacity: 0, y: -8 }}
+                    className="absolute right-0 mt-2 w-36 rounded-lg glass-strong p-1.5 shadow-lg z-50 border border-border"
                   >
                     {languages.map((lang) => (
                       <button
@@ -180,12 +198,9 @@ export const Navigation = () => {
                           setLanguage(lang.code as any);
                           setLanguageMenuOpen(false);
                         }}
-                        className={`flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-primary/10 ${
-                          language === lang.code ? "text-primary" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full px-3 py-1.5 text-xs rounded-md hover:bg-primary/10 transition-colors ${language === lang.code ? "text-primary font-medium" : "text-foreground/70"}`}
                       >
-                        <span>{lang.flag}</span>
-                        {lang.label}
+                        <span>{lang.flag}</span> {lang.label}
                       </button>
                     ))}
                   </motion.div>
@@ -193,24 +208,26 @@ export const Navigation = () => {
               </AnimatePresence>
             </div>
 
-            {/* Mobile Menu Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden rounded-full"
-            >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </Button>
+            {/* Mobile toggle */}
+            {!isCV && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden rounded-full"
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -218,25 +235,27 @@ export const Navigation = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 z-40 w-full max-w-xs glass-strong md:hidden"
+            className="fixed inset-y-0 right-0 z-40 w-full max-w-xs glass-strong md:hidden border-l border-border"
           >
-            <div className="flex flex-col gap-4 p-8 mt-20">
+            <div className="flex flex-col gap-3 p-8 mt-20">
               {navItems.map((item, index) => (
                 <motion.button
                   key={item.id}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.07 }}
                   onClick={() => scrollToSection(item.id)}
-                  className={`text-left text-lg font-medium transition-colors hover:text-primary ${
-                    activeSection === item.id
-                      ? "text-primary"
-                      : "text-foreground"
-                  }`}
+                  className={`text-left text-base font-medium transition-colors hover:text-primary ${activeSection === item.id ? "text-primary" : "text-foreground"}`}
                 >
                   {item.label}
                 </motion.button>
               ))}
+              <Link
+                to="/my-portfolio/cv"
+                className="flex items-center gap-2 text-base font-medium text-primary mt-2"
+              >
+                <FileText className="h-4 w-4" /> {t.nav.cv}
+              </Link>
             </div>
           </motion.div>
         )}
