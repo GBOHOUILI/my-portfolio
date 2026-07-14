@@ -382,7 +382,7 @@ const CVContent = () => {
             <div className="flex items-start gap-6">
               {/* Photo de profil */}
               <img
-                src="me.jpeg"
+                src="me1.PNG"
                 alt="Merveil Eldo-Moréo GBOHOUILI"
                 className="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover border-2 border-primary/30 shadow-md shrink-0"
               />
