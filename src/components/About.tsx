@@ -53,14 +53,14 @@ export const About = () => {
           >
             <div className="glass-strong rounded-2xl p-8 aspect-square flex items-center justify-center">
               <div className="text-center">
-                <div className="w-[400px] h-[400px] mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden border-2 border-primary">
+                <div className="w-[400px] h-[400px] mx-auto mb-0 from-primary to-accent flex items-center justify-center overflow-hidden ">
                   <img
-                    src="me1.jpeg"
+                    src="me1.png"
                     alt="Profil"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain mb-4"
                   />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">
+                <h3 className="text-2xl font-bold m-2">
                   Eldo-Moréo GBOHOUILI
                 </h3>
                 <p className="text-muted-foreground">

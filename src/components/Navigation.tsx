@@ -125,7 +125,7 @@ export const Navigation = () => {
           <div className="flex items-center gap-2 relative">
             {/* CV link */}
             {!isCV ? (
-              <Link to="/my-portfolio/cv">
+              <Link to="/cv">
                 <Button
                   variant="outline"
                   size="sm"
